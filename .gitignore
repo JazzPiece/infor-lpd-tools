@@ -1,0 +1,11 @@
+# Infor LPD process files — keep out of this repo
+*.lpd
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
