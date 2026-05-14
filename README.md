@@ -15,6 +15,7 @@ Infor Process Designer has no built-in auto-arrange, no diff view, no cross-proc
 | [`lpd_diff.py`](#lpd_diff--compare-two-versions) | Compare two versions of a process — see exactly what changed |
 | [`lpd_search.py`](#lpd_search--cross-process-search) | Search across a folder of LPD files by node type, prop, or text |
 | [`lpd_rename.py`](#lpd_rename--rename-a-node-id) | Rename a node ID and update all references safely |
+| [`lpd_export.py`](#lpd_export--diagram-export) | Export a process to Graphviz DOT or draw.io diagram format |
 | `lpd_common.py` | Shared utilities (imported by other scripts — not a standalone tool) |
 
 ---
@@ -284,6 +285,52 @@ Renaming 'GetEmployee1000' -> 'QueryActiveEmployees1000' in MyProcess.lpd
 Backup:  MyProcess_rename_backup_20260327_091523.lpd
 Done.    MyProcess.lpd
 ```
+
+---
+
+## lpd_export — Diagram export
+
+Export a process to a visual diagram. No diagramming software required for either format.
+
+### Formats
+
+| Format | Flag | How to view |
+|--------|------|-------------|
+| Graphviz DOT | `--format dot` _(default)_ | Paste the `.dot` file into **https://dreampuf.github.io/GraphvizOnline** — no install needed. Or install [Graphviz](https://graphviz.org/download/) and use `--render png/svg/pdf`. |
+| draw.io XML | `--format drawio` | Open the `.drawio` file at **https://app.diagrams.net** (free, no login) or in the [draw.io desktop app](https://github.com/jgraph/drawio-desktop/releases). From draw.io you can export to Visio `.vsdx`, PDF, PNG, or SVG via **File › Export As**. |
+
+### Usage
+
+```bash
+python lpd_export.py MyProcess.lpd                    # write MyProcess.dot
+python lpd_export.py MyProcess.lpd --format drawio    # write MyProcess.drawio
+python lpd_export.py MyProcess.lpd -o diagram.drawio  # explicit output path
+python lpd_export.py MyProcess.lpd --render png       # dot + render to .png (needs Graphviz)
+python lpd_export.py --dir ./production/              # export all .lpd in a folder
+python lpd_export.py --dir ./production/ --format drawio
+```
+
+### Visual legend (all formats)
+
+| Colour | Node type |
+|--------|-----------|
+| Grey | START / END |
+| Blue | Iterator (QUERY, LM, ITERFR, LOOP, DATAEX, …) |
+| Gold / yellow | BRANCH (decision) |
+| Salmon / red | EMAIL |
+| Green | WEBRN (web service call) |
+| White | Everything else |
+
+| Edge style | Edge type |
+|------------|-----------|
+| Solid black | NORMAL |
+| Dashed blue | BRANCH |
+| Dashed red | ERROR |
+
+### Notes
+
+- Coordinates from `lpd_layout.py` are used when present; otherwise a simple left-to-right topo grid is applied automatically.
+- `--render` requires [Graphviz](https://graphviz.org/download/) (`dot` on PATH) and only applies to `--format dot`.
 
 ---
 
